@@ -10,7 +10,9 @@ int main(int argc, char* argv[])
   Timetable output(input);
   Validator validator(input, output);
 
-  simple_rs(input, output, 1);
+  // simple_rs(input, output, 1);
+  // accept_reject_rs(input, output, 1);
+  direct_rs(input, output, 1);
 
   validator.PrintViolations(std::cout);
   std::cout << std::endl;

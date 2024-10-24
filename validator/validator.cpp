@@ -485,3 +485,12 @@ void Validator::PrintViolationsOnRoomStability(std::ostream& os) const
       os << "[S(" << (out.UsedRoomsNo(c) - 1) * in.ROOM_STABILITY_COST << ")] Course " << in.CourseVector(c).Name() << " uses "
 	 << out.UsedRoomsNo(c) << " different rooms" << std::endl;
 }
+
+unsigned Validator::GetTotalCost() const {
+  return CostsOnRoomCapacity() + CostsOnMinWorkingDays() * in.MIN_WORKING_DAYS_COST
+    + CostsOnCurriculumCompactness() * in.CURRICULUM_COMPACTNESS_COST + CostsOnRoomStability() * in.ROOM_STABILITY_COST;
+}
+
+unsigned Validator::GetViolations() const {
+  return CostsOnLectures() + CostsOnConflicts() + CostsOnAvailability() + CostsOnRoomOccupation();
+}

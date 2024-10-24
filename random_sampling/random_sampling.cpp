@@ -5,7 +5,7 @@
 
 bool CurriculumConflict(Faculty& faculty, unsigned course_id, unsigned period_id, std::vector<std::vector<unsigned> > rs_tt) {
   bool flag = false;
-  unsigned false_negative = rand() % 100;
+  unsigned false_negative = rand() % 80;
   if (false_negative == 0)
     return false;
 
@@ -124,10 +124,10 @@ void direct_rs(Faculty& faculty, Timetable& timetable, int seed) {
     }
   }
 
-  std::vector<std::vector<std::string> > free_rooms(faculty.Periods(), std::vector<std::string>(faculty.Rooms(),""));
+  std::vector<std::vector<std::string> > free_rooms(faculty.Periods(), std::vector<std::string>());
   for (int i = 0; i < faculty.Periods(); i++) {
     for (int j = 1; j <= faculty.Rooms(); j++) {
-      free_rooms[i][j - 1] = faculty.RoomVector(j).Name();
+      free_rooms[i].push_back(faculty.RoomVector(j).Name());
     }
   }
 

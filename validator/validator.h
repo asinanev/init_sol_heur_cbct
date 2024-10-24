@@ -137,6 +137,9 @@ public:
   void PrintCosts(std::ostream& os) const;
   void PrintTotalCost(std::ostream& os) const;
   void PrintViolations(std::ostream& os) const;
+  unsigned GetTotalCost() const;
+  unsigned GetViolations() const;
+
 private:
   unsigned CostsOnLectures() const;
   unsigned CostsOnConflicts() const;

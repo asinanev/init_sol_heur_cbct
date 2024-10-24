@@ -1,32 +1,49 @@
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+/cmake-build-debug/.cmake/api/v1/query/cache-v2
+/cmake-build-debug/.cmake/api/v1/query/cmakeFiles-v1
+/cmake-build-debug/.cmake/api/v1/query/codemodel-v2
+/cmake-build-debug/.cmake/api/v1/query/toolchains-v1
+/cmake-build-debug/.cmake/api/v1/reply/cache-v2-86a96ee6f6f05c1cb316.json
+/cmake-build-debug/.cmake/api/v1/reply/cmakeFiles-v1-a7c5496c908296be4891.json
+/cmake-build-debug/.cmake/api/v1/reply/codemodel-v2-3785d79db78f154e263d.json
+/cmake-build-debug/.cmake/api/v1/reply/directory-.-Debug-0267b2eb302ddcf15029.json
+/cmake-build-debug/.cmake/api/v1/reply/directory-validator-Debug-f3ce3dd869a92c15ec13.json
+/cmake-build-debug/.cmake/api/v1/reply/index-2024-10-24T00-27-02-0200.json
+/cmake-build-debug/.cmake/api/v1/reply/target-app-Debug-5b793382f02e9970eb11.json
+/cmake-build-debug/.cmake/api/v1/reply/target-cbct-Debug-9bae510b10ddecbdf0e9.json
+/cmake-build-debug/.cmake/api/v1/reply/toolchains-v1-8251fec08e20f018bede.json
+/cmake-build-debug/CMakeFiles/3.29.6/CompilerIdC/CMakeCCompilerId.c
+/cmake-build-debug/CMakeFiles/3.29.6/CompilerIdC/CMakeCCompilerId.o
+/cmake-build-debug/CMakeFiles/3.29.6/CompilerIdCXX/CMakeCXXCompilerId.cpp
+/cmake-build-debug/CMakeFiles/3.29.6/CompilerIdCXX/CMakeCXXCompilerId.o
+/cmake-build-debug/CMakeFiles/3.29.6/CMakeCCompiler.cmake
+/cmake-build-debug/CMakeFiles/3.29.6/CMakeCXXCompiler.cmake
+/cmake-build-debug/CMakeFiles/3.29.6/CMakeDetermineCompilerABI_C.bin
+/cmake-build-debug/CMakeFiles/3.29.6/CMakeDetermineCompilerABI_CXX.bin
+/cmake-build-debug/CMakeFiles/3.29.6/CMakeSystem.cmake
+/cmake-build-debug/CMakeFiles/app.dir/app.cpp.o
+/cmake-build-debug/CMakeFiles/cbct.dir/validator/validator.cpp.o
+/cmake-build-debug/CMakeFiles/cbct.dir/app.cpp.o
+/cmake-build-debug/CMakeFiles/clion-Debug-log.txt
+/cmake-build-debug/CMakeFiles/clion-environment.txt
+/cmake-build-debug/CMakeFiles/cmake.check_cache
+/cmake-build-debug/CMakeFiles/CMakeConfigureLog.yaml
+/cmake-build-debug/CMakeFiles/rules.ninja
+/cmake-build-debug/CMakeFiles/TargetDirectories.txt
+/cmake-build-debug/Testing/Temporary/LastTest.log
+/cmake-build-debug/validator/cmake_install.cmake
+/cmake-build-debug/.ninja_deps
+/cmake-build-debug/.ninja_log
+/cmake-build-debug/app
+/cmake-build-debug/build.ninja
+/cmake-build-debug/cmake_install.cmake
+/cmake-build-debug/CMakeCache.txt
+/cmake-build-debug/libcbct.dylib
+/.idea/codeStyles/codeStyleConfig.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/.gitignore
+/.idea/.name
+/.idea/curriculum-based_course_timetabling.iml
+/.idea/editor.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/vcs.xml

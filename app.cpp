@@ -1,5 +1,6 @@
 #include <iostream>
 #include <validator/validator.h>
+#include <random_sampling/random_sampling.h>
 
 int main(int argc, char* argv[])
 {
@@ -9,7 +10,16 @@ int main(int argc, char* argv[])
   Timetable output(input);
   Validator validator(input, output);
 
-  std::cout << input.CourseVector(0).Name() << std::endl;
+  simple_rs(input, output, 1);
+
+  validator.PrintViolations(std::cout);
+  std::cout << std::endl;
+  validator.PrintCosts(std::cout);
+  std::cout << std::endl;
+  if (output.Warnings() > 0)
+    std::cout << "There are " << output.Warnings() << " warnings!" << std::endl;
+  std::cout << "Summary: ";
+  validator.PrintTotalCost(std::cout);
 
   return 0;
 }

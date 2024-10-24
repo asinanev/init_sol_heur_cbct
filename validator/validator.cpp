@@ -38,6 +38,7 @@ Timetable::Timetable(const Faculty &f)
 
 void Timetable::UpdateTimetable(std::vector<std::vector<unsigned> > _tt) {
 	tt.assign(_tt.begin(), _tt.end());
+  UpdateRedundantData();
 }
 
 

@@ -11,6 +11,7 @@ add_library(cbct SHARED
         app.cpp)
 target_include_directories(cbct PRIVATE "${PROJECT_SOURCE_DIR}")
 add_subdirectory("validator")
+add_subdirectory("random_sampling")
 
 add_executable(app
         app.cpp)

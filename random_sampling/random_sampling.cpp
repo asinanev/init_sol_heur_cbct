@@ -44,22 +44,34 @@ void simple_rs(Faculty& faculty, Timetable& timetable, int seed) {
   }
 
   // Assign a random room to a random period for a random event
-  std::srand(seed);
-  while (events_to_be_scheduled.size() > 0) {
-    int course_id = events_to_be_scheduled[std::rand() % events_to_be_scheduled.size()];
-    int room_id = (std::rand() % faculty.Rooms()) + 1;
-    int period_id = std::rand() % faculty.Periods();
+  std::mt19937_64 gen(seed);
+
+  while (!events_to_be_scheduled.empty()) {
+    unsigned course_id;
+
+    if (events_to_be_scheduled.size() > 1) {
+      std::uniform_int_distribution<unsigned> eventsDis(0, events_to_be_scheduled.size() - 1);
+      course_id = events_to_be_scheduled[eventsDis(gen)];
+    } else {
+      course_id = events_to_be_scheduled[0];
+    }
+
+    std::uniform_int_distribution<unsigned> roomDis(1, faculty.Rooms());
+    std::uniform_int_distribution<unsigned> periodDis(0, faculty.Periods() - 1);
+
+    unsigned room_id = roomDis(gen);
+    unsigned period_id = periodDis(gen);
 
     rs_tt[course_id][period_id] = room_id;
 
     // Remove event from list of events to be scheduled
-    auto it = std::find(events_to_be_scheduled.begin(), events_to_be_scheduled.end(),
-                        course_id);
+    auto it = std::ranges::find(events_to_be_scheduled,
+                                course_id);
     if (it != events_to_be_scheduled.end()) {
       events_to_be_scheduled.erase(it);
     }
-  }
 
+  }
   timetable.UpdateTimetable(rs_tt);
 }
 
@@ -83,27 +95,32 @@ void accept_reject_rs(Faculty& faculty, Timetable& timetable, int seed){
     }
   }
 
-  std::srand(seed);
-  while (events_to_be_scheduled.size() > 0) {
-    int course_id = events_to_be_scheduled[std::rand() % events_to_be_scheduled.size()];
-    int period_id = std::rand() % faculty.Periods();
+  std::mt19937_64 gen(seed);
+  while (!events_to_be_scheduled.empty()) {
 
-    while (rs_tt[course_id][period_id] != 0 || free_rooms[period_id].size() == 0) {
-      period_id = std::rand() % faculty.Periods();
+    std::uniform_int_distribution<unsigned> eventsDis(0, events_to_be_scheduled.size() - 1);
+    unsigned course_id = events_to_be_scheduled[eventsDis(gen)];
+
+    std::uniform_int_distribution<unsigned> periodDis(0, faculty.Periods() - 1);
+    unsigned period_id = periodDis(gen);
+
+    while (rs_tt[course_id][period_id] != 0 || free_rooms[period_id].empty()) {
+      period_id = periodDis(gen);
     }
 
-    int room_id = faculty.RoomIndex(free_rooms[period_id][std::rand() % free_rooms[period_id].size()]);
+    std::uniform_int_distribution<unsigned> roomDis(0, free_rooms[period_id].size() - 1);
+    const int room_id = faculty.RoomIndex(free_rooms[period_id][roomDis(gen)]);
 
     // Remove event from list of events to be scheduled
-    auto course_it = std::find(events_to_be_scheduled.begin(), events_to_be_scheduled.end(),
-                        course_id);
+    auto course_it = std::ranges::find(events_to_be_scheduled,
+                                       course_id);
     if (course_it != events_to_be_scheduled.end()) {
       events_to_be_scheduled.erase(course_it);
     }
 
     // Remove used room from list of free rooms per period
-    auto room_it = std::find(free_rooms[period_id].begin(), free_rooms[period_id].end(),
-                             faculty.RoomVector(room_id).Name());
+    auto room_it = std::ranges::find(free_rooms[period_id],
+                                     faculty.RoomVector(room_id).Name());
     if (room_it != free_rooms[period_id].end()) {
       free_rooms[period_id].erase(room_it);
     }
@@ -139,7 +156,7 @@ void direct_rs(Faculty& faculty, Timetable& timetable, int seed) {
     std::string room_name = "";
 
     while (rs_tt[course_id][period_id] != 0
-           || free_rooms[period_id].size() == 0
+           || free_rooms[period_id].empty()
            || NotBigEnough(faculty, free_rooms[period_id], faculty.CourseVector(course_id).Students())
            || !faculty.Available(course_id, period_id)
            || CurriculumConflict(faculty, course_id, period_id, rs_tt)) {

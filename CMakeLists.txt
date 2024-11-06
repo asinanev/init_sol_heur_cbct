@@ -8,10 +8,13 @@ if (MSVC)
 endif()
 
 add_library(cbct SHARED
-        app.cpp)
+        app.cpp
+        hill_climbing/hill_climbing.cpp)
 target_include_directories(cbct PRIVATE "${PROJECT_SOURCE_DIR}")
 add_subdirectory("validator")
 add_subdirectory("random_sampling")
+add_subdirectory("hill_climbing")
+add_subdirectory("simulated_annealing")
 
 add_executable(app
         app.cpp)

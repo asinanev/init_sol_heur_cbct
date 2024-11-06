@@ -116,6 +116,7 @@ public:
   void UpdateRedundantData();
   // Changing timetable matrix
   void UpdateTimetable(std::vector<std::vector<unsigned> > _tt);
+  std::vector<std::vector<unsigned>> GetTimetable() const {return tt; };
 
  private:
   const Faculty & in;

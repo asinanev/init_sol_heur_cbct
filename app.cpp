@@ -3,6 +3,7 @@
 #include <random_sampling/random_sampling.h>
 #include <hill_climbing/hill_climbing.h>
 #include <simulated_annealing/simulated_annealing.h>
+#include <plant_prop/plant_prop.h>
 
 const std::vector<int> SEEDS({
   1,
@@ -20,26 +21,26 @@ const std::vector<int> SEEDS({
 
 const std::vector<std::string> FILE_PATHS({
     "../datasets/dataset1.ctt",
-    // "../datasets/dataset2.ctt",
-    // "../datasets/dataset3.ctt",
-    // "../datasets/dataset4.ctt",
-    // "../datasets/dataset5.ctt",
-    // "../datasets/dataset6.ctt",
-    // "../datasets/dataset7.ctt",
-    // "../datasets/dataset8.ctt",
-    // "../datasets/dataset9.ctt",
-    // "../datasets/dataset10.ctt",
-    // "../datasets/dataset11.ctt",
-    // "../datasets/dataset12.ctt",
-    // "../datasets/dataset13.ctt",
-    // "../datasets/dataset14.ctt",
-    // "../datasets/dataset15.ctt",
-    // "../datasets/dataset16.ctt",
-    // "../datasets/dataset17.ctt",
-    // "../datasets/dataset18.ctt",
-    // "../datasets/dataset19.ctt",
-    // "../datasets/dataset20.ctt",
-    // "../datasets/dataset21.ctt"
+    "../datasets/dataset2.ctt",
+    "../datasets/dataset3.ctt",
+    "../datasets/dataset4.ctt",
+    "../datasets/dataset5.ctt",
+    "../datasets/dataset6.ctt",
+    "../datasets/dataset7.ctt",
+    "../datasets/dataset8.ctt",
+    "../datasets/dataset9.ctt",
+    "../datasets/dataset10.ctt",
+    "../datasets/dataset11.ctt",
+    "../datasets/dataset12.ctt",
+    "../datasets/dataset13.ctt",
+    "../datasets/dataset14.ctt",
+    "../datasets/dataset15.ctt",
+    "../datasets/dataset16.ctt",
+    "../datasets/dataset17.ctt",
+    "../datasets/dataset18.ctt",
+    "../datasets/dataset19.ctt",
+    "../datasets/dataset20.ctt",
+    "../datasets/dataset21.ctt"
   });
 
 void RandomSamplingSetup() {
@@ -143,7 +144,7 @@ void HillClimbingSetup() {
     }
 
     for (int j = 0; j < seeds.size(); j++) {
-      std::string result_path = "results/hill_climb/solutionset";
+      std::string result_path = "results/hill_climb/solutionset_srs";
       result_path.append(std::to_string(i+1));
       result_path.append("_");
       result_path.append(std::to_string(j));
@@ -155,7 +156,9 @@ void HillClimbingSetup() {
 
       csv << "step,violations,score,cviolation,cscore" << std::endl;
 
-      accept_reject_rs(input, output, seeds[j]);
+      simple_rs(input, output, seeds[j]);
+      // accept_reject_rs(input, output, seeds[j]);
+      // direct_rs(input, output, 2);
 
       unsigned violations = validator.GetViolations();
       unsigned costs = validator.GetTotalCost();
@@ -175,7 +178,7 @@ void HillClimbingSetup() {
 
 void SimulatedAnnealingSetup() {
   std::cout << "Simulated Annealing" << std::endl;
-  for (int i = 0; i < FILE_PATHS.size(); i++) {
+  for (int i = 0; i < 1; i++) {
     Faculty input(FILE_PATHS[i]);
     Timetable output(input);
     Validator validator(input, output);
@@ -183,7 +186,6 @@ void SimulatedAnnealingSetup() {
 
     std::vector<int> seeds(1, 0);
 
-    std::srand(i);
     std::mt19937_64 gen(SEEDS[0]);
     std::uniform_int_distribution<int> dis(0, 100000);
     for (int & seed : seeds) {
@@ -191,41 +193,59 @@ void SimulatedAnnealingSetup() {
     }
 
     for (int j = 0; j < seeds.size(); j++) {
-      std::string result_path = "results/simulated_annealing/solutionset";
-      result_path.append(std::to_string(i+1));
-      result_path.append("_");
-      result_path.append(std::to_string(j));
-      result_path.append("_5");
-      result_path.append(".csv");
-      std::ofstream csv;
-      csv.open(result_path);
+      for (int k = 1; k < 6; k++) {
+        std::string result_path = "results/simulated_annealing/solutionset";
+        result_path.append(std::to_string(i+1));
+        result_path.append("_");
+        result_path.append(std::to_string(j));
+        result_path.append("_");
+        result_path.append(std::to_string(k));
+        result_path.append(".csv");
+        std::ofstream csv;
+        csv.open(result_path);
 
-      std::cout << result_path << std::endl;
+        std::cout << result_path << std::endl;
 
-      csv << "step,violations,score,cviolation,cscore" << std::endl;
+        csv << "step,violations,score,cviolation,cscore" << std::endl;
 
-      accept_reject_rs(input, output, seeds[j]);
+        accept_reject_rs(input, output, seeds[j]);
 
-      unsigned violations = validator.GetViolations();
-      unsigned costs = validator.GetTotalCost();
+        unsigned violations = validator.GetViolations();
+        unsigned costs = validator.GetTotalCost();
 
-      csv << "0," << violations << "," << costs << "," << violations << "," << costs << std::endl;
+        csv << "0," << violations << "," << costs << "," << violations << "," << costs << std::endl;
 
-      std::vector<std::string> score_progression = simulatedAnnealing(input, output, validator, seeds[j], 1000000,  5);
+        std::vector<std::string> score_progression = simulatedAnnealing(input, output, validator, seeds[j], 1000000,  k);
 
-      for (const std::string & k : score_progression) {
-        csv << k;
+        for (const std::string & l : score_progression) {
+          csv << l;
+        }
+
+        csv.close();
       }
-
-      csv.close();
     }
+  }
+}
+
+void PlantPropSetup() {
+  std::cout << "PlantProp" << std::endl;
+  std::vector<std::string> results;
+
+  for (const auto & i : FILE_PATHS) {
+    Faculty input(i);
+    results = propagate(input);
+  }
+
+  for (const auto & i : results) {
+    std::cout << i << std::endl;
   }
 }
 
 int main(int argc, char* argv[])
 {
   // RandomSamplingSetup();
-  // HillClimbingSetup();
+  HillClimbingSetup();
   SimulatedAnnealingSetup();
+  // PlantPropSetup();
   return 0;
 }

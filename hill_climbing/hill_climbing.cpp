@@ -70,6 +70,7 @@ std::vector<std::string> hillClimb(Faculty& faculty, Timetable& timetable, Valid
 
   unsigned prev_violations = validator.GetViolations();
   unsigned prev_costs = validator.GetTotalCost();
+  unsigned prev_weighted_score = prev_violations * 100 + prev_costs;
 
   for (unsigned i = 1; i <= steps; i++) {
     makeStep(faculty, curr_tt, gen, stepTypes(gen));
@@ -77,6 +78,7 @@ std::vector<std::string> hillClimb(Faculty& faculty, Timetable& timetable, Valid
 
     const unsigned curr_violations = validator.GetViolations();
     const unsigned curr_costs = validator.GetTotalCost();
+    unsigned curr_weighted_score = curr_violations * 100 + curr_costs;
 
     if (prev_violations < curr_violations  || (curr_violations == prev_violations && prev_costs < curr_costs)) {
       timetable.UpdateTimetable(prev_tt);

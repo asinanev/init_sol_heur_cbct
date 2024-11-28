@@ -12,7 +12,7 @@ std::vector<double> linearReheat(double startingTemp, int numberOfIterations, in
       t = t / 2;
     }
 
-    temperatures[i] = t * (1.0 - ((double) i / epochSize));
+    temperatures[i] = t * (1.0 - static_cast<double>(i % epochSize) / epochSize);
   }
 
   return temperatures;
@@ -28,24 +28,24 @@ std::vector<double> geometric(double beta, double startingTemp, int numberOfIter
   return temperatures;
 }
 
-std::vector<double> germanAndGerman(int c, int numberOfIterations) {
+std::vector<double> germanAndGerman(unsigned c, int numberOfIterations) {
   std::vector<double> temperatures(numberOfIterations, 0);
 
   for (int i = 0; i < numberOfIterations; i++) {
-    temperatures[i] = ((double) c) / std::log(((double) i) + 1.0);
+    temperatures[i] = static_cast<double>(c) / std::log(static_cast<double>(i) + 1.0);
   }
 
   return temperatures;
 }
 
-std::vector<double> generateTemperatures(int coolingSchedule, int numberOfIterations) {
+std::vector<double> generateTemperatures(int coolingSchedule, int numberOfIterations, unsigned weightedScore) {
   switch (coolingSchedule) {
     case 1:
       return germanAndGerman(50, numberOfIterations);
     case 2:
       return germanAndGerman(1, numberOfIterations);
     case 3:
-      return germanAndGerman(10000, numberOfIterations);
+      return germanAndGerman(weightedScore , numberOfIterations);
     case 4:
       return geometric(0.99999, 1000, numberOfIterations);
     case 5:
@@ -55,13 +55,16 @@ std::vector<double> generateTemperatures(int coolingSchedule, int numberOfIterat
   }
 }
 
-double acceptanceProb(unsigned pViolations, unsigned pScore, unsigned cViolations, unsigned cScore, double temp) {
-  int delta = static_cast<int>(pScore) - static_cast<int>(cScore);
-  delta += static_cast<int>(pViolations) - static_cast<int>(cViolations);
-  // int delta = - static_cast<int>(pScore);
-  // delta += - static_cast<int>(pViolations);
-  double prob = std::exp(delta/temp);
-  // std::cout << delta << " " << temp << " " << prob << std::endl;
+// double acceptanceProb(unsigned pViolations, unsigned pScore, unsigned cViolations, unsigned cScore, double temp) {
+//   int delta = static_cast<int>(pScore) - static_cast<int>(cScore);
+//   delta += static_cast<int>(pViolations) - static_cast<int>(cViolations);
+//   double prob = std::exp(delta/temp);
+//   return prob;
+// }
+
+double acceptanceProb(const unsigned pWScore, const unsigned cWScore, const double temp) {
+  const int delta = abs(static_cast<int>(pWScore) - static_cast<int>(cWScore));
+  const double prob = std::exp(-delta/temp);
   return prob;
 }
 
@@ -71,14 +74,16 @@ std::vector<std::string> simulatedAnnealing(Faculty& faculty, Timetable& timetab
   std::vector<std::string> score_progression(steps, "");
   std::vector<std::vector<unsigned>> prev_tt = timetable.GetTimetable();
   std::vector<std::vector<unsigned>> curr_tt = timetable.GetTimetable();
-  std::vector<double> temperatures = generateTemperatures(coolingSchedule, steps);
 
   unsigned prev_violations = validator.GetViolations();
   unsigned prev_costs = validator.GetTotalCost();
+  unsigned prev_weighted_score = prev_violations * 100 + prev_costs;
+
+  std::vector<double> temperatures = generateTemperatures(coolingSchedule, steps, prev_weighted_score);
 
   std::mt19937_64 gen(seed);
   std::uniform_int_distribution<unsigned> stepTypes(0, 1);
-  std::uniform_real_distribution<double> probCheck(0, 1);
+  std::normal_distribution<double> probCheck(0.8, 0.1);
 
   for (unsigned i = 1; i <= steps; i++) {
     makeStep(faculty, curr_tt, gen, stepTypes(gen));
@@ -86,12 +91,17 @@ std::vector<std::string> simulatedAnnealing(Faculty& faculty, Timetable& timetab
 
     unsigned curr_violations = validator.GetViolations();
     unsigned curr_costs = validator.GetTotalCost();
+    unsigned curr_weighted_score = curr_violations * 100 + curr_costs;
 
-    if (prev_violations < curr_violations  || (curr_violations == prev_violations && prev_costs < curr_costs)) {
-      if (acceptanceProb(prev_violations, prev_costs, curr_violations, curr_costs, temperatures[i-1]) >= probCheck(gen)) {
+    // if (prev_violations < curr_violations  || (curr_violations == prev_violations && prev_costs < curr_costs)) {
+    if (prev_weighted_score < curr_weighted_score) {
+      double ndist = probCheck(gen);
+      std::cout << acceptanceProb(prev_weighted_score, curr_weighted_score, temperatures[i-1]) << " " << ndist << std::endl;
+      if (acceptanceProb(prev_weighted_score, curr_weighted_score, temperatures[i-1]) > ndist) {
         prev_tt = curr_tt;
         prev_violations = curr_violations;
         prev_costs = curr_costs;
+        prev_weighted_score = curr_weighted_score;
       } else {
         timetable.UpdateTimetable(prev_tt);
         curr_tt = prev_tt;
@@ -100,6 +110,7 @@ std::vector<std::string> simulatedAnnealing(Faculty& faculty, Timetable& timetab
       prev_tt = curr_tt;
       prev_violations = curr_violations;
       prev_costs = curr_costs;
+      prev_weighted_score = curr_weighted_score;
     }
 
     score_progression[i].append(std::to_string(i));

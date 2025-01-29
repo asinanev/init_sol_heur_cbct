@@ -96,7 +96,7 @@ std::vector<std::string> simulatedAnnealing(Faculty& faculty, Timetable& timetab
     // if (prev_violations < curr_violations  || (curr_violations == prev_violations && prev_costs < curr_costs)) {
     if (prev_weighted_score < curr_weighted_score) {
       double ndist = probCheck(gen);
-      std::cout << acceptanceProb(prev_weighted_score, curr_weighted_score, temperatures[i-1]) << " " << ndist << std::endl;
+      // std::cout << acceptanceProb(prev_weighted_score, curr_weighted_score, temperatures[i-1]) << " " << ndist << std::endl;
       if (acceptanceProb(prev_weighted_score, curr_weighted_score, temperatures[i-1]) > ndist) {
         prev_tt = curr_tt;
         prev_violations = curr_violations;

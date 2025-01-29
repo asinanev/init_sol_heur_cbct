@@ -2,6 +2,7 @@
 #include <iostream>
 #include <set>
 #include <random>
+#include <algorithm>
 
 bool CurriculumConflict(Faculty& faculty, unsigned course_id, unsigned period_id, std::vector<std::vector<unsigned> > rs_tt) {
   bool flag = false;
